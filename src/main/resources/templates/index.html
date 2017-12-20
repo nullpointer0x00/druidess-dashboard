@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/webjars/datatables/1.10.12/css/dataTables.bootstrap.css"/>
+</head>
+<body>
+
+<header>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Running Tasks</h3>
+                </div>
+                <table id="runningTasksTable" class="taskTable display table table-sm table-dark table-striped">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Status Code</th>
+                        <th>Duration</th>
+                        <th>Host</th>
+                        <th>Port</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="task : ${runningTasks}">
+                        <tr>
+                            <td th:text="${task.id}">Task Id</td>
+                            <td th:text="${task.statusCode}">Status Code</td>
+                            <td th:text="${task.duration}">Duration</td>
+                            <td th:text="${task.location.host}">Host</td>
+                            <td th:text="${task.location.port}">Port</td>
+                            <td><a class="glyphicon glyphicon-cog"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}}"></a></td>
+                            <td><a class="glyphicon glyphicon-time"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}/status}"></a></td>
+                            <td><a class="glyphicon glyphicon-book"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}/log}"></a></td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title">Pending Tasks</h3></div>
+                <table id="pendingTasksTable" class="taskTable display table table-sm table-dark table-striped">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Creation Time</th>
+                        <th>Queued</th>
+                        <th>Status Code</th>
+                        <th>Duration</th>
+                        <th>Host</th>
+                        <th>Port</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="task : ${pendingTasks}">
+                        <tr>
+                            <td th:text="${task.id}">Task Id</td>
+                            <td th:text="${task.createTime}">Creation Time</td>
+                            <td th:text="${task.queueInsertionTime}">Queued Time</td>
+                            <td th:text="${task.statusCode}">Status Code</td>
+                            <td th:text="${task.duration}">Duration</td>
+                            <td th:text="${task.location.host}">Host</td>
+                            <td th:text="${task.location.port}">Port</td>
+                            <td><a class="glyphicon glyphicon-cog"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}}"></a></td>
+                            <td><a class="glyphicon glyphicon-time"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}/status}"></a></td>
+                            <td><a class="glyphicon glyphicon-book"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}/log}"></a></td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Waiting Tasks</h3>
+                </div>
+                <table id="waitingTasksTable" class="taskTable display table table-sm table-dark table-striped">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Status Code</th>
+                        <th>Duration</th>
+                        <th>Host</th>
+                        <th>Port</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="task : ${waitingTasks}">
+                        <tr>
+                            <td th:text="${task.id}">Task Id</td>
+                            <td th:text="${task.statusCode}">Status Code</td>
+                            <td th:text="${task.duration}">Duration</td>
+                            <td th:text="${task.location.host}">Host</td>
+                            <td th:text="${task.location.port}">Port</td>
+                            <td><a class="glyphicon glyphicon-cog"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}}"></a></td>
+                            <td><a class="glyphicon glyphicon-time"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}/status}"></a></td>
+                            <td><a class="glyphicon glyphicon-book"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}/log}"></a></td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title">Completed</h3></div>
+                <table id="completedTasksTable" class="taskTable display table table-sm table-dark table-striped">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Status Code</th>
+                        <th>Duration</th>
+                        <th>Host</th>
+                        <th>Port</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="task : ${completedTasks}">
+                        <tr>
+                            <td th:text="${task.id}">Task Id</td>
+                            <td th:text="${task.statusCode}">Status Code</td>
+                            <td th:text="${task.duration}">Duration</td>
+                            <td th:text="${task.location.host}">Host</td>
+                            <td th:text="${task.location.port}">Port</td>
+                            <td><a class="glyphicon glyphicon-cog"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}}"></a></td>
+                            <td><a class="glyphicon glyphicon-time"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}/status}"></a></td>
+                            <td><a class="glyphicon glyphicon-book"
+                                   th:href="@{/druid/indexer/v1/task/${task.getUrlEncodedTaskId()}/log}"></a></td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/webjars/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="/webjars/datatables/1.10.12/js/dataTables.bootstrap.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.taskTable').DataTable({
+            aLengthMenu: [
+                [25, 50, 100, 500, -1],
+                [25, 50, 100, 500, "All"]
+            ],
+            iDisplayLength: -1
+        });
+    });
+</script>
+</body>
+</html>
