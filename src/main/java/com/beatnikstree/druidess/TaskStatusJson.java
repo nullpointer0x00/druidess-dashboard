@@ -10,12 +10,12 @@ import java.util.Date;
 
 public class TaskStatusJson implements Serializable {
 
-    public String id;
-    public TaskStatus.Status statusCode;
-    public Integer duration;
-    public TaskLocation location;
-    public Date createTime;
-    public Date queueInsertionTime;
+    private String id;
+    private TaskStatus.Status statusCode;
+    private Integer duration;
+    private TaskLocation location;
+    private Date createTime;
+    private Date queueInsertionTime;
 
     public TaskStatusJson() {
     }
@@ -68,15 +68,6 @@ public class TaskStatusJson implements Serializable {
         this.queueInsertionTime = queueInsertionTime;
     }
 
-    public String getUrlEncodedTaskId() {
-        try {
-            return URLEncoder.encode(id, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } finally {
-            return null;
-        }
-    }
 
     @Override
     public String toString() {
