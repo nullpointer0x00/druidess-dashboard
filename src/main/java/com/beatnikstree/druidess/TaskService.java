@@ -48,7 +48,7 @@ public class TaskService {
     }
 
     public void killTask(String taskId, String overlord) {
-        String killUrl = overlord + v1IndexerEndpoint + taskId + "/" + killTasksEndpoint;
+        String killUrl = overlord + v1IndexerEndpoint + "task/" + taskId + "/" + killTasksEndpoint;
         log.info("Kill task: {} Url: {}", taskId, killUrl);
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(killUrl, "" , String.class);
         log.info("Response: {}", responseEntity.getBody());

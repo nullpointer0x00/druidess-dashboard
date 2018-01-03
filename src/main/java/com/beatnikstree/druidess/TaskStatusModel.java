@@ -2,13 +2,26 @@ package com.beatnikstree.druidess;
 
 public class TaskStatusModel {
 
+    private String id;
     private TaskStatusJson taskStatus;
     private Boolean isSelected = false;
     private String urlEncodedId;
 
-    public TaskStatusModel(TaskStatusJson taskStatus, Boolean isSelected) {
+    public TaskStatusModel() {
+    }
+
+    public TaskStatusModel(String id, TaskStatusJson taskStatus, Boolean isSelected) {
+        this.id = id;
         this.taskStatus = taskStatus;
         this.isSelected = isSelected;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public TaskStatusJson getTaskStatus() {

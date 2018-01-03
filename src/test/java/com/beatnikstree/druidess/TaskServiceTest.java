@@ -32,4 +32,33 @@ public class TaskServiceTest {
         List<TaskStatusJson> taskStatuses = taskService.getPendingTasks(overlordUrl);
         System.out.println("Hope you have some tasks.");
     }
+
+    @Test
+    public void killAllPending() {
+        List<TaskStatusJson> taskStatuses = taskService.getPendingTasks(overlordUrl);
+        for(TaskStatusJson task : taskStatuses){
+            taskService.killTask(task.getId(), overlordUrl);
+        }
+        System.out.println("Hope you have some tasks.");
+    }
+
+    @Test
+    public void killAllWaiting() {
+        List<TaskStatusJson> taskStatuses = taskService.getWaitingTasks(overlordUrl);
+        for(TaskStatusJson task : taskStatuses){
+            taskService.killTask(task.getId(), overlordUrl);
+        }
+        System.out.println("Hope you have some tasks.");
+    }
+
+    @Test
+    public void killAllRunning() {
+        List<TaskStatusJson> taskStatuses = taskService.getRunningTasks(overlordUrl);
+        for(TaskStatusJson task : taskStatuses){
+            taskService.killTask(task.getId(), overlordUrl);
+        }
+        System.out.println("Hope you have some tasks.");
+    }
+
 }
+

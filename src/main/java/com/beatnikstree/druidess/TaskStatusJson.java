@@ -4,8 +4,6 @@ import io.druid.indexing.common.TaskLocation;
 import io.druid.indexing.common.TaskStatus;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Date;
 
 public class TaskStatusJson implements Serializable {
@@ -14,7 +12,7 @@ public class TaskStatusJson implements Serializable {
     private TaskStatus.Status statusCode;
     private Integer duration;
     private TaskLocation location;
-    private Date createTime;
+    private Date createdTime;
     private Date queueInsertionTime;
 
     public TaskStatusJson() {
@@ -52,12 +50,12 @@ public class TaskStatusJson implements Serializable {
         this.location = location;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public Date getCreatedTime() {
+        return createdTime;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 
     public Date getQueueInsertionTime() {
@@ -76,7 +74,7 @@ public class TaskStatusJson implements Serializable {
                 ", statusCode=" + statusCode +
                 ", duration=" + duration +
                 ", location=" + location +
-                ", createTime=" + createTime +
+                ", createdTime=" + createdTime +
                 ", queueInsertionTime=" + queueInsertionTime +
                 '}';
     }

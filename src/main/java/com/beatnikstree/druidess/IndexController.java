@@ -3,9 +3,11 @@ package com.beatnikstree.druidess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
@@ -23,10 +25,11 @@ public class IndexController {
     public void init() {
         druidEnvironmentSettings = new HashMap<>();
         envs = new ArrayList<>();
-        DruidEnvironmentSettings des1 = new DruidEnvironmentSettings(1, "Dev1", "http://dev1:8080", "#a6c7fc");
-        DruidEnvironmentSettings des2 = new DruidEnvironmentSettings(2, "Dev2", "http://dev2.cc:8080", "#f7c980");
-        DruidEnvironmentSettings des3 = new DruidEnvironmentSettings(3, "Dev3", "http://dev3:8080", "#ff7aba");
-        DruidEnvironmentSettings des4 = new DruidEnvironmentSettings(4, "Dev4", "http://dev4:8080", "#8ee594");
+        //TEMP HARDCODED
+        DruidEnvironmentSettings des1 = new DruidEnvironmentSettings(1, "Dev1", "http://:8080", "#a6c7fc");
+        DruidEnvironmentSettings des2 = new DruidEnvironmentSettings(2, "Dev2", "http://:8080", "#f7c980");
+        DruidEnvironmentSettings des3 = new DruidEnvironmentSettings(3, "Dev3", "http://:8080", "#ff7aba");
+        DruidEnvironmentSettings des4 = new DruidEnvironmentSettings(4, "Dev4", "http://", "#8ee594");
         DruidEnvironmentSettings des5 = new DruidEnvironmentSettings(5, "PROD", "http://prod:8080", "#ff0a33");
         DruidEnvironmentSettings des6 = new DruidEnvironmentSettings(6, "INT", "http://int:8080", "#f30a33");
         druidEnvironmentSettings.put(des1.id, des1);
@@ -90,26 +93,21 @@ public class IndexController {
         model.addAttribute("type", type);
         model.addAttribute("tableId", tableId);
         List<TaskStatusModel> taskModels = new ArrayList<>();
-        tasks.stream().forEach(t -> taskModels.add(new TaskStatusModel(t, false)));
+        tasks.stream().forEach(t -> taskModels.add(new TaskStatusModel(t.getId(), t, false)));
         model.addAttribute("tasks", taskModels);
+        TaskFormData taskFormData = new TaskFormData(taskModels);
+        model.addAttribute("taskFormData", taskFormData);
         return "fragments/task-table :: " + fragmentPart;
     }
 
-    @RequestMapping("/kill-all")
-    public String killAll(HttpSession httpSession, @ModelAttribute ArrayList<TaskStatusModel> tasks) {
+    @PostMapping("/kill")
+    public String kill(HttpServletRequest request, HttpSession httpSession, @ModelAttribute(name = "taskFormData") TaskFormData taskFormData) {
         DruidEnvironmentSettings des = (DruidEnvironmentSettings) httpSession.getAttribute("env");
-        for (TaskStatusModel task : tasks) {
-            taskService.killTask(task.getUrlEncodedId(), des.overlordUrl);
-        }
-        return "redirect:index?env=" + des.id;
-    }
-
-    @RequestMapping("/kill-selected")
-    public String killSelected(HttpSession httpSession, @ModelAttribute ArrayList<TaskStatusModel> tasks) {
-        DruidEnvironmentSettings des = (DruidEnvironmentSettings) httpSession.getAttribute("env");
-        for (TaskStatusModel task : tasks) {
-            if(task.getIsSelected()) {
-                taskService.killTask(task.getUrlEncodedId(), des.overlordUrl);
+        for (TaskStatusModel task : taskFormData.getTaskStatusModels()) {
+            if ("selected".equals(request.getParameter("kill")) && task.getIsSelected()) {
+                taskService.killTask(task.getId(), des.overlordUrl);
+            } else if ("all".equals(request.getParameter("kill"))) {
+                taskService.killTask(task.getId(), des.overlordUrl);
             }
         }
         return "redirect:index?env=" + des.id;

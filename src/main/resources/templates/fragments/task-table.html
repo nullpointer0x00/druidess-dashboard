@@ -4,62 +4,75 @@
 </head>
 <body>
 <div class="panel panel-success panel-collapse" th:fragment="task-table">
-    <div class="panel-heading">
-        <p class="panel-title pull-left" th:text="${type + ' Tasks'}" />
-        <form th:action="@{/kill-all}"
-              th:object="${tasks}" method="post">
-            <button type="submit" class="btn btn-danger btn-xs pull-right"
+    <form th:action="@{/kill}"
+          th:object="${taskFormData}" method="post">
+        <div class="panel-heading">
+            <p class="panel-title pull-left" th:text="${type + ' Tasks'}"/>
+            <button type="submit" name="kill" th:value="all"
+                    class="btn btn-danger btn-xs pull-right"
                     th:classappend="${tasks.empty} ? 'hidden' : ''"
                     data-toggle="confirmation" th:text="${'Kill All'}">
 
             </button>
-        </form>
-        <form th:action="@{/kill-selected}"
-              th:object="${tasks}" method="post">
-            <button type="submit" class="btn btn-danger btn-xs pull-right"
+            <button type="submit" name="kill" th:value="selected"
+                    class="btn btn-danger btn-xs pull-right"
                     th:classappend="${tasks.empty} ? 'hidden' : ''"
                     data-toggle="confirmation" th:text="${'Kill Selected'}">
             </button>
-        </form>
-        <div class="clearfix"></div>
-    </div>
-    <table th:id="${tableId}" class="taskTable display table table-sm table-dark table-striped">
-        <thead>
-        <tr>
-            <th></th>
-            <th>Id</th>
-            <th>Status Code</th>
-            <th>Duration</th>
-            <th>Host</th>
-            <th class="no-sort">Port</th>
-            <th class="no-sort"></th>
-            <th class="no-sort"></th>
-            <th class="no-sort"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <th:block th:each="task : ${tasks}">
+            <div class="clearfix"></div>
+        </div>
+        <table th:id="${tableId}" class="taskTable display table table-sm table-dark table-striped">
+            <thead>
             <tr>
-                <td>
-                    <input type="checkbox" th:field="*{task.isSelected}"/>
-                </td>
-                <td th:text="${task.taskStatus.id}">Task Id</td>
-                <td th:text="${task.taskStatus.statusCode}">Status Code</td>
-                <td th:text="${task.taskStatus.duration}">Duration</td>
-                <td th:text="${task.taskStatus.location.host}">Host</td>
-                <td th:text="${task.taskStatus.location.port}">Port</td>
-                <td><a class="glyphicon glyphicon-cog"
-                       th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}"></a></td>
-                <td><a class="glyphicon glyphicon-time"
-                       th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}"></a>
-                </td>
-                <td><a class="glyphicon glyphicon-book"
-                       th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}"></a>
-                </td>
+                <th></th>
+                <th>Id</th>
+                <th th:hidden="${type != 'Running' and type != 'Pending'}">Created Time</th>
+                <th th:hidden="${type != 'Running' and type != 'Pending'}">Queued Time</th>
+                <th>Status Code</th>
+                <th>Duration</th>
+                <th>Host</th>
+                <th class="no-sort">Port</th>
+                <th class="no-sort"></th>
+                <th class="no-sort"></th>
+                <th class="no-sort"></th>
             </tr>
-        </th:block>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            <th:block th:each="task, stat : *{taskStatusModels}">
+                <tr>
+                    <td>
+                        <input type="hidden" th:name="|taskStatusModels[${stat.index}]|"
+                               th:field="*{taskStatusModels[__${stat.index}__].id}" th:value="${task.id}"/>
+                        <input type="checkbox"
+                               th:name="|taskStatusModels[${stat.index}]|"
+                               th:field="*{taskStatusModels[__${stat.index}__].isSelected}"
+                               th:checked="${task.isSelected}"/>
+                    </td>
+                    <td th:text="${task.taskStatus.id}">Task Id</td>
+                    <td th:hidden="${type != 'Running' and type != 'Pending'}" th:text="${task.taskStatus.createdTime}">
+                        Created Time
+                    </td>
+                    <td th:hidden="${type != 'Running' and type != 'Pending'}"
+                        th:text="${task.taskStatus.queueInsertionTime}">Task Id
+                    </td>
+                    <td th:text="${task.taskStatus.statusCode}">Status Code</td>
+                    <td th:text="${task.taskStatus.duration}">Duration</td>
+                    <td th:text="${task.taskStatus.location.host}">Host</td>
+                    <td th:text="${task.taskStatus.location.port}">Port</td>
+                    <td><a class="glyphicon glyphicon-cog"
+                           th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}"></a>
+                    </td>
+                    <td><a class="glyphicon glyphicon-time"
+                           th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}"></a>
+                    </td>
+                    <td><a class="glyphicon glyphicon-book"
+                           th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}"></a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </form>
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
@@ -84,7 +97,7 @@
 </div>
 <div class="panel panel-primary" th:fragment="completed-task-table(tasks)">
     <div class="panel-heading">
-        <p class="panel-title" th:text="${'Completed'}" />
+        <p class="panel-title" th:text="${'Completed'}"/>
     </div>
     <table th:id="${tableId}" class="taskTable display table table-sm table-dark table-striped">
         <thead>
