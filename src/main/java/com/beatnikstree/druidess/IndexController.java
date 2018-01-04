@@ -15,44 +15,27 @@ import java.util.*;
 @Controller
 public class IndexController {
 
-    private Map<Integer, EnvironmentSettings> druidEnvironmentSettings;
-    private List<EnvironmentSettings> envs;
-    private Integer default_env;
-
     @Autowired
     private EnvironmentSettingsRepository environmentSettingsRepository;
 
     @Autowired
     private TaskService taskService;
 
-    @PostConstruct
-    public void init() {
-        druidEnvironmentSettings = new HashMap<>();
-        envs = new ArrayList<>();
-        for (EnvironmentSettings environmentSettings : environmentSettingsRepository.findAll()) {
-            envs.add(environmentSettings);
-            druidEnvironmentSettings.put(environmentSettings.getId(), environmentSettings);
-            if (environmentSettings.getIsDefault()) {
-                default_env = environmentSettings.getId();
-            }
-        }
-    }
 
     @RequestMapping("/index")
     public String index(HttpSession session, @RequestParam(value = "env") Optional<Integer> env, Model model) {
 
         if (session.getAttribute("envs") == null) {
-            session.setAttribute("envs", envs);
+            session.setAttribute("envs", environmentSettingsRepository.findAll());
         }
 
         EnvironmentSettings des;
-        if (env.isPresent() && druidEnvironmentSettings.get(env.get()) != null) {
-            des = druidEnvironmentSettings.get(env.get());
-            session.setAttribute("env", des);
+        if (env.isPresent()) {
+            des = environmentSettingsRepository.findById(env.get());
         } else {
-            des = druidEnvironmentSettings.get(default_env);
-            session.setAttribute("env", des);
+            des = environmentSettingsRepository.findFirstByIsDefaultTrue();
         }
+        session.setAttribute("env", des);
         return "index";
     }
 
