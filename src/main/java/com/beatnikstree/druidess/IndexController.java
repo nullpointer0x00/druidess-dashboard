@@ -1,9 +1,10 @@
 package com.beatnikstree.druidess;
 
+import com.beatnikstree.druidess.data.EnvironmentSettings;
+import com.beatnikstree.druidess.data.EnvironmentSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -14,9 +15,12 @@ import java.util.*;
 @Controller
 public class IndexController {
 
-    private Map<Integer, DruidEnvironmentSettings> druidEnvironmentSettings;
-    private List<DruidEnvironmentSettings> envs;
-    private Integer default_env = 3;
+    private Map<Integer, EnvironmentSettings> druidEnvironmentSettings;
+    private List<EnvironmentSettings> envs;
+    private Integer default_env;
+
+    @Autowired
+    private EnvironmentSettingsRepository environmentSettingsRepository;
 
     @Autowired
     private TaskService taskService;
@@ -25,26 +29,13 @@ public class IndexController {
     public void init() {
         druidEnvironmentSettings = new HashMap<>();
         envs = new ArrayList<>();
-        //TEMP HARDCODED
-        DruidEnvironmentSettings des1 = new DruidEnvironmentSettings(1, "Dev1", "http://:8080", "#a6c7fc");
-        DruidEnvironmentSettings des2 = new DruidEnvironmentSettings(2, "Dev2", "http://:8080", "#f7c980");
-        DruidEnvironmentSettings des3 = new DruidEnvironmentSettings(3, "Dev3", "http://:8080", "#ff7aba");
-        DruidEnvironmentSettings des4 = new DruidEnvironmentSettings(4, "Dev4", "http://", "#8ee594");
-        DruidEnvironmentSettings des5 = new DruidEnvironmentSettings(5, "PROD", "http://prod:8080", "#ff0a33");
-        DruidEnvironmentSettings des6 = new DruidEnvironmentSettings(6, "INT", "http://int:8080", "#f30a33");
-        druidEnvironmentSettings.put(des1.id, des1);
-        druidEnvironmentSettings.put(des2.id, des2);
-        druidEnvironmentSettings.put(des3.id, des3);
-        druidEnvironmentSettings.put(des4.id, des4);
-        druidEnvironmentSettings.put(des5.id, des5);
-        druidEnvironmentSettings.put(des6.id, des6);
-        envs.add(des1);
-        envs.add(des2);
-        envs.add(des3);
-        envs.add(des4);
-        envs.add(des5);
-        envs.add(des6);
-
+        for (EnvironmentSettings environmentSettings : environmentSettingsRepository.findAll()) {
+            envs.add(environmentSettings);
+            druidEnvironmentSettings.put(environmentSettings.getId(), environmentSettings);
+            if (environmentSettings.getIsDefault()) {
+                default_env = environmentSettings.getId();
+            }
+        }
     }
 
     @RequestMapping("/index")
@@ -54,12 +45,12 @@ public class IndexController {
             session.setAttribute("envs", envs);
         }
 
-        DruidEnvironmentSettings des;
+        EnvironmentSettings des;
         if (env.isPresent() && druidEnvironmentSettings.get(env.get()) != null) {
             des = druidEnvironmentSettings.get(env.get());
             session.setAttribute("env", des);
         } else {
-            des = envs.get(default_env);
+            des = druidEnvironmentSettings.get(default_env);
             session.setAttribute("env", des);
         }
         return "index";
@@ -67,26 +58,26 @@ public class IndexController {
 
     @RequestMapping("/tasks/{taskType}")
     public String taskTable(HttpSession session, @PathVariable("taskType") String taskType, Model model) {
-        DruidEnvironmentSettings des = (DruidEnvironmentSettings) session.getAttribute("env");
+        EnvironmentSettings des = (EnvironmentSettings) session.getAttribute("env");
         List<TaskStatusJson> tasks = null;
         String tableId = null;
         String type = null;
         String fragmentPart = "task-table";
         if ("completeTasks".equals(taskType)) {
-            tasks = taskService.getCompleteTasks(des.overlordUrl);
+            tasks = taskService.getCompleteTasks(des.getOverlordUrl());
             tableId = "complete_task_table";
             type = "Completed";
             fragmentPart = "completed-" + fragmentPart;
         } else if ("pendingTasks".equals(taskType)) {
-            tasks = taskService.getPendingTasks(des.overlordUrl);
+            tasks = taskService.getPendingTasks(des.getOverlordUrl());
             tableId = "pending_task_table";
             type = "Pending";
         } else if ("runningTasks".equals(taskType)) {
-            tasks = taskService.getRunningTasks(des.overlordUrl);
+            tasks = taskService.getRunningTasks(des.getOverlordUrl());
             tableId = "running_task_table";
             type = "Running";
         } else if ("waitingTasks".equals(taskType)) {
-            tasks = taskService.getWaitingTasks(des.overlordUrl);
+            tasks = taskService.getWaitingTasks(des.getOverlordUrl());
             tableId = "waiting_task_table";
             type = "Waiting";
         }
@@ -102,15 +93,15 @@ public class IndexController {
 
     @PostMapping("/kill")
     public String kill(HttpServletRequest request, HttpSession httpSession, @ModelAttribute(name = "taskFormData") TaskFormData taskFormData) {
-        DruidEnvironmentSettings des = (DruidEnvironmentSettings) httpSession.getAttribute("env");
+        EnvironmentSettings des = (EnvironmentSettings) httpSession.getAttribute("env");
         for (TaskStatusModel task : taskFormData.getTaskStatusModels()) {
             if ("selected".equals(request.getParameter("kill")) && task.getIsSelected()) {
-                taskService.killTask(task.getId(), des.overlordUrl);
+                taskService.killTask(task.getId(), des.getOverlordUrl());
             } else if ("all".equals(request.getParameter("kill"))) {
-                taskService.killTask(task.getId(), des.overlordUrl);
+                taskService.killTask(task.getId(), des.getOverlordUrl());
             }
         }
-        return "redirect:index?env=" + des.id;
+        return "redirect:index?env=" + des.getId();
     }
 
 }
