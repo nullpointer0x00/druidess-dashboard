@@ -35,6 +35,7 @@
                 <th class="no-sort"></th>
                 <th class="no-sort"></th>
                 <th class="no-sort"></th>
+                <th class="no-sort"></th>
             </tr>
             </thead>
             <tbody>
@@ -59,14 +60,20 @@
                     <td th:text="${task.taskStatus.duration}">Duration</td>
                     <td th:text="${task.taskStatus.location.host}">Host</td>
                     <td th:text="${task.taskStatus.location.port}">Port</td>
-                    <td><a class="glyphicon glyphicon-cog"
-                           th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}"></a>
+                    <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}">
+                        payload
+                    </a></td>
+                    <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}">
+                        status
+                    </a>
                     </td>
-                    <td><a class="glyphicon glyphicon-time"
-                           th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}"></a>
+                    <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}">
+                        log
+                    </a>
                     </td>
-                    <td><a class="glyphicon glyphicon-book"
-                           th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}"></a>
+                    <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log?offset=-8192'}">
+                        log(last 8kb)
+                    </a>
                     </td>
                 </tr>
             </th:block>
@@ -77,6 +84,7 @@
         /*<![CDATA[*/
         $(document).ready(function () {
             $([[${'#' + tableId}]]).DataTable({
+                order: [],
                 aLengthMenu: [
                     [25, 50, 100, 500, -1],
                     [25, 50, 100, 500, "All"]
@@ -110,6 +118,7 @@
             <th class="no-sort"></th>
             <th class="no-sort"></th>
             <th class="no-sort"></th>
+            <th class="no-sort"></th>
         </tr>
         </thead>
         <tbody>
@@ -122,13 +131,20 @@
                 <td th:text="${task.taskStatus.duration}">Duration</td>
                 <td th:text="${task.taskStatus.location.host}">Host</td>
                 <td th:text="${task.taskStatus.location.port}">Port</td>
-                <td><a class="glyphitaskStatus.con glyphicon-cog"
-                       th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}"></a></td>
-                <td><a class="glyphicon glyphicon-time"
-                       th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}"></a>
+                <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}">
+                    payload
+                </a></td>
+                <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}">
+                    status
+                </a>
                 </td>
-                <td><a class="glyphicon glyphicon-book"
-                       th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}"></a>
+                <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}">
+                    log
+                </a>
+                </td>
+                <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log?offset=-8192'}">
+                    log(last 8kb)
+                </a>
                 </td>
             </tr>
         </th:block>
@@ -138,6 +154,7 @@
         /*<![CDATA[*/
         $(document).ready(function () {
             $([[${'#' + tableId}]]).DataTable({
+                order: [],
                 aLengthMenu: [
                     [25, 50, 100, 500, -1],
                     [25, 50, 100, 500, "All"]
