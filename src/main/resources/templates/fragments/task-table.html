@@ -60,18 +60,18 @@
                     <td th:text="${task.taskStatus.duration}">Duration</td>
                     <td th:text="${task.taskStatus.location.host}">Host</td>
                     <td th:text="${task.taskStatus.location.port}">Port</td>
-                    <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}">
+                    <td><a th:target="_blank" th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}">
                         payload
                     </a></td>
-                    <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}">
+                    <td><a th:target="_blank" th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}">
                         status
                     </a>
                     </td>
-                    <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}">
+                    <td><a th:target="_blank" th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}">
                         log
                     </a>
                     </td>
-                    <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log?offset=-8192'}">
+                    <td><a th:target="_blank" th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log?offset=-8192'}">
                         log(last 8kb)
                     </a>
                     </td>
@@ -131,18 +131,18 @@
                 <td th:text="${task.taskStatus.duration}">Duration</td>
                 <td th:text="${task.taskStatus.location.host}">Host</td>
                 <td th:text="${task.taskStatus.location.port}">Port</td>
-                <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}">
+                <td><a th:target="_blank" th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId}">
                     payload
                 </a></td>
-                <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}">
+                <td><a th:target="_blank" th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/status'}">
                     status
                 </a>
                 </td>
-                <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}">
+                <td><a th:target="_blank" th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log'}">
                     log
                 </a>
                 </td>
-                <td><a th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log?offset=-8192'}">
+                <td><a th:target="_blank" th:href="${ session.env.overlordUrl + '/druid/indexer/v1/task/' + task.urlEncodedId + '/log?offset=-8192'}">
                     log(last 8kb)
                 </a>
                 </td>
